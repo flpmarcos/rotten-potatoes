@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: mongodb
-    template:
+  template:
       metadata:
         labels:
           app: mongodb
@@ -22,8 +22,7 @@ spec:
                 value: mongouser
               - name: MONGO_INITDB_ROOT_PASSWORD
                 value: mongopwd
-...
-
+---
 # CRIANDO SERVICE MONGODB
 apiVersion: v1
 kind: Service
@@ -35,16 +34,14 @@ spec:
   ports:
     - port: 27017
   type: ClusterIP
-
-...
-
+---
 # CRIANDO APLICACAO WEB
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web
 spec:
-  replicas: 6
+  replicas: 10
   selector:
     matchLabels:
       app: web
@@ -60,16 +57,15 @@ spec:
             - containerPort: 5000
           env:
             - name: MONGO_DB
-                value: "admin"
-            # O HOST É O NOME DO SERVICE 
+              value: "admin"
             - name: MONGO_HOST
-                value: "mongodb"
+              value: "mongodb"
             - name: MONGO_PORT
-                value: "27017"
+              value: "27017"
             - name: MONGO_USERNAME
-                value: mongouser
+              value: "mongouser"
             - name: MONGO_PASSWORD
-                value: mongopwd
+              value: "mongopwd"
 ...
 # CRIANDO SERVICE DA APLICAÇÃO WEB
 apiVersion: v1
@@ -83,6 +79,6 @@ spec:
     - port: 80
       # Como estou expondo a aplicacao na 5000 faco um target port nela
       targetPort: 5000
-  type: NodePort
+  type: LoadBalancer
 
       
